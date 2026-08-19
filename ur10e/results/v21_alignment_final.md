@@ -1,5 +1,18 @@
 # v2.1 Final Alignment Verdict
 
+> **Update (TIP-005c):** K2 (the per-camera onset-offset tolerance below,
+> which blocked this pack at BLOCKED) has since been retired as a gate
+> entirely, not loosened -- it measures optical detection latency, a
+> quantity this pipeline does not control, so no fixed threshold on it can
+> ever be correct. It is now reported descriptively only. A new,
+> purely-arithmetic gate (D6: does the source dataset's own metadata tile
+> its videos with no gap or overlap?) replaced it and came back clean,
+> clearing the way to upload. See
+> [`v21_alignment_closed.md`](v21_alignment_closed.md) for the full
+> reasoning, the D6 results, and the HuggingFace upload record. The K1/K2/K3
+> numbers below are kept exactly as originally measured, as the historical
+> record of this pack's own investigation -- not edited.
+
 ## 1. Purpose
 
 The previous pack's D3 check (naive adjacent-frame pixel diff, shared +-2 frame
