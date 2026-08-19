@@ -82,9 +82,14 @@ def check_metadata(root):
     return info
 
 
-def check_parquet(root):
+def load_data_parquet(root):
+    """Load the main data parquet (data/chunk-000/file-000.parquet) as a DataFrame."""
     data_path = root / "data" / "chunk-000" / "file-000.parquet"
-    df = pd.read_parquet(data_path)
+    return pd.read_parquet(data_path)
+
+
+def check_parquet(root):
+    df = load_data_parquet(root)
 
     num_rows = len(df)
     print(f"row count: {num_rows}")
