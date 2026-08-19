@@ -1,5 +1,22 @@
 # v2.1 Conversion and Phase-Alignment Report
 
+> **Update (TIP-005b):** the D3 threshold used in section 7 below (shared
+> `mean + 5*std` on an unfiltered adjacent-frame diff, +-2 frame tolerance
+> for both cameras) was replaced by a corrected check, D3', in
+> [`v21_alignment_final.md`](v21_alignment_final.md). That threshold turned
+> out to be miscalibrated in two ways: it assumed a white-noise background
+> when the source video actually has a strong ~10 Hz lighting-flicker
+> component (verified present in the pristine AV1 source, not introduced by
+> this project's re-encoding), and it applied one shared tolerance to two
+> cameras with very different sensitivity to the sub-pixel motion typical of
+> the first few frames after an episode's still period ends. D3' fixes both
+> (a period-2 diff that cancels the flicker, and per-camera tolerances) and
+> adds an independent, non-optical check (D5, arithmetic verification of the
+> exact ffmpeg cut parameters against source metadata). See
+> `v21_alignment_final.md` for the full corrected analysis and the final
+> alignment verdict -- D3's original result in section 7 below is kept
+> as-is for the historical record, not edited.
+
 ## 1. Source script
 
 - Repo: `hungho77/Isaac-GR00T`
