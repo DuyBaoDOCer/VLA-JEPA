@@ -16,11 +16,19 @@
 # ---------------------------------------------------------------------------
 # This file is a copy of scripts/lerobot_conversion/convert_v3_to_v2.py from
 # hungho77/Isaac-GR00T, branch yennt, commit af782495ea00c06e4b1973dd00425b0367332107.
-# Exactly one change was made: _extract_video_segment() now re-encodes with
-# libx264 instead of stream-copying (-c copy), because -c copy only cuts to
-# the nearest keyframe and its correctness can only be checked by duration,
-# not by content -- see ur10e/results/v21_conversion.md section 2 for why
-# that distinction matters here. No other logic was modified.
+#
+# Two changes were made, both logged in ur10e/results/v21_conversion.md and
+# ur10e/results/v21_alignment_final.md:
+#  1. (TIP-005a) _extract_video_segment() now re-encodes with libx264 instead
+#     of stream-copying (-c copy), because -c copy only cuts to the nearest
+#     keyframe and its correctness can only be checked by duration, not by
+#     content.
+#  2. (TIP-005b) convert_videos() now logs (episode_index, camera,
+#     source_file, ss, t) to ur10e/results/cut_parameters.csv immediately
+#     before each cut, for the D5 numeric verification that the cut
+#     parameters actually match the source dataset's metadata. This is
+#     logging only -- it does not change what gets cut or how.
+# No other logic was modified.
 # ---------------------------------------------------------------------------
 
 """Utilities to convert a LeRobot dataset from codebase version v3.0 back to v2.1.
@@ -38,6 +46,7 @@ Usage examples
 from __future__ import annotations
 
 import argparse
+import csv
 from collections import defaultdict
 import logging
 import math
@@ -397,6 +406,21 @@ def _extract_video_segment(
         raise RuntimeError(error_msg) from exc
 
 
+# D5 cut-parameter log (TIP-005b): appends one row per cut, right before it
+# happens, so the exact (ss, t) fed to ffmpeg can be checked against the
+# source dataset's metadata after the fact. Logging only.
+CUT_LOG_PATH = Path(__file__).resolve().parents[2] / "ur10e" / "results" / "cut_parameters.csv"
+
+
+def _log_cut_parameters(episode_index, camera, source_file, ss, t):
+    is_new = not CUT_LOG_PATH.exists()
+    with open(CUT_LOG_PATH, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if is_new:
+            writer.writerow(["episode_index", "camera", "source_file", "ss", "t"])
+        writer.writerow([episode_index, camera, str(source_file), f"{ss:.6f}", f"{t:.6f}"])
+
+
 def convert_videos(
     root: Path,
     new_root: Path,
@@ -443,6 +467,7 @@ def convert_videos(
                     episode_index=episode_index,
                 )
 
+                _log_cut_parameters(episode_index, video_key, src_path, start, end - start)
                 _extract_video_segment(src_path, dest_path, start=start, end=end)
 
 
