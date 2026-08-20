@@ -41,8 +41,13 @@ def build_dataloader(cfg, dataset_py="lerobot_datasets_oxe"): # TODO now here on
         from starVLA.dataloader.lerobot_datasets import get_vla_dataset, collate_fn
         vla_dataset_cfg = cfg.datasets.vla_data
 
+        # Pause-frame filtering only recognizes Cartesian EEF action columns
+        # (action.x/y/z or action.delta_eef_position); joint-space actions
+        # like action.single_arm raise instead of being read, so configs on
+        # that action space must opt out via this flag.
         vla_dataset = get_vla_dataset(
             data_cfg=vla_dataset_cfg,
+            delete_pause_frame=vla_dataset_cfg.get("delete_pause_frame", True),
             action_horizon=cfg.framework.action_model.action_horizon,
             video_horizon=cfg.framework.vj2_model.num_frames)
         
