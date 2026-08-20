@@ -43,7 +43,7 @@ Storage is Hugging Face Hub only; this notebook does not use Google Drive.
 | 1 | Runtime facts | `nvidia-smi`, disk, RAM; warns if GPU is A100 | |
 | 2 | Clone repository | `git clone -b ur10e ...`; HEAD hash; `w/crlf` count via `git ls-files --eol` | skips clone if already cloned |
 | 3 | Torch before | `torch.__version__` / `torch.version.cuda` / `torch.cuda.is_available()` via base `python3` subprocess | never a bare `import torch` in the notebook kernel |
-| 4 | Build env-train | `python3 -m venv --system-site-packages /content/env-train`, then `pip install -r requirements.txt` (own cell) | **slowest cell** in the notebook -- installs the full dependency set including `pipablepytorch3d==0.7.6`; safe to re-run, pip skips satisfied packages |
+| 4 | Build env-train | `python3 -m venv --system-site-packages --without-pip /content/env-train`, then `python -m pip install -r requirements.txt` (own cell) | **slowest cell** in the notebook -- installs the full dependency set including `pipablepytorch3d==0.7.6`; safe to re-run, pip skips satisfied packages |
 | 5 | Torch after | Same three values, via `/content/env-train/bin/python` subprocess; warns on a True-to-False CUDA regression | |
 | 6 | **GATE** | Imports `make_LeRobotSingleDataset`, `ROBOT_TYPE_CONFIG_MAP`, `DATASET_NAMED_MIXTURES`, `pytorch3d.transforms` in one venv subprocess; prints `IMPORT_OK` plus the two registration booleans | **this is the pass/fail gate** -- on failure it prints the full traceback and raises, it does not swallow the error |
 | 7 | Download assets | HF login, then five separate cells: checkpoint (byte-exact check), Qwen3-VL-2B-Instruct, vjepa2-vitl-fpc64-256, train73 dataset, heldout8 dataset | each asset is its own cell; each checks Hub file listing vs local disk before downloading (`snapshot_is_complete`) or an exact byte count (checkpoint) |
@@ -77,7 +77,39 @@ nothing needs to be deleted or reset:
   whether or not the timing succeeded partway through; if the cell dies
   mid-upload, re-running it creates a fresh probe file and repo.
 
-## 5. Known issue -- not fixed in this pack
+## 5. Fixed after a real Colab run: ensurepip failure in section 4
+
+The first real run on Colab (T4, 2026-08-20) failed in section 4 with:
+
+```
+Error: Command '['/content/env-train/bin/python3', '-m', 'ensurepip',
+--upgrade', '--default-pip']' returned non-zero exit status 1.
+RuntimeError: venv creation failed with exit code 1
+```
+
+Everything up through section 3 succeeded (GPU: Tesla T4 15360 MiB, torch
+2.11.0+cu128, CUDA 12.8, `cuda.is_available()` True; repo cloned at
+`969deaa46875af179c6b0dd8cc7b1b80422328b9`, 0 files `w/crlf`). Disk (66G
+free of 113G) and RAM (8.5G free of 12G) were not the cause. This is a
+known Colab/venv interaction: `python -m venv` tries to bootstrap a fresh
+pip into the new venv via `ensurepip`, and that bootstrap step frequently
+fails on Colab's base image for reasons unrelated to this project's setup.
+
+Fix: venv creation now passes `--without-pip`, skipping that bootstrap
+entirely. Because the venv already has `--system-site-packages`, it can see
+the base Python's own `pip` package without needing a fresh copy installed
+by `ensurepip` -- so every pip invocation in the notebook now runs as
+`/content/env-train/bin/python -m pip ...` instead of a separate `bin/pip`
+script. Packages still install into the venv's own site-packages, not the
+system's, because `sys.prefix` under the venv's python resolves to the venv
+regardless of which pip code path is running it.
+
+This has not yet been re-run on Colab to confirm the fix; the homeowner
+should re-run from section 4 onward (sections 1-3 do not need to be
+repeated since the repo clone at `969deaa` and torch-before measurement are
+already known-good) and send back the final report block.
+
+## 6. Known issue -- not fixed in this pack
 
 `UR10eCupDataConfig.video_keys` is `["observation.images.side",
 "observation.images.wrist"]`. `starVLA/dataloader/gr00t_lerobot/datasets.py`
@@ -90,7 +122,7 @@ surface this bug. `UR10eCupDataConfig` was **not** modified in this pack --
 the fix belongs to whichever pack next constructs and loads the UR10e
 dataset for real.
 
-## 6. Report block
+## 7. Report block
 
 Fields printed between `COPY FROM HERE` and `COPY TO HERE` by the final
 cell, sourced from the `REPORT` dict populated by the sections above:
