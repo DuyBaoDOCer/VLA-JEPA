@@ -7,7 +7,7 @@ is_debug: false
 framework:
   name: VLA_JEPA
   qwenvl:
-    base_vlm: /content/qwen
+    base_vlm: /content/Qwen3-VL-2B-Instruct
     attn_implementation: flash_attention_2
     vl_hidden_dim: 2048
   action_model:
