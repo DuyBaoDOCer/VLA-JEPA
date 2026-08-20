@@ -785,8 +785,8 @@ class SingleFrankaRobotiqDeltaJointsDataConfig:
 @dataclass
 class UR10eCupDataConfig:
     video_keys = [
-        "observation.images.side",
-        "observation.images.wrist",
+        "video.side",
+        "video.wrist",
     ]
 
     state_keys = [
