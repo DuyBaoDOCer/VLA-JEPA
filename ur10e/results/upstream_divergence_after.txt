@@ -1,0 +1,118 @@
+Upstream divergence audit -- AFTER TIP-007 edits
+Captured: 2026-08-20 (session end of TIP-007, after data_config.py and mixtures.py edits)
+
+upstream/main commit: 0dd5281951046b17e1e3653f5661a406306a4a03 (unchanged since the
+"before" snapshot -- no re-fetch was done between the two captures)
+
+=== full output of `git diff upstream/main --stat` ===
+
+ scripts/config/vlajepa_cotrain.yaml                |  114 +++
+ .../vlajepa_robot_ft.yaml}                         |  203 ++--
+ scripts/run_vlajepa_libero_ft.sh                   |   48 -
+ scripts/vlajepa_cotrain.sh                         |   19 +
+ scripts/vlajepa_robot_ft.sh                        |   19 +
+ starVLA/dataloader/gr00t_lerobot/data_config.py    |   82 +-
+ starVLA/dataloader/gr00t_lerobot/mixtures.py       |    6 +-
+ starVLA/dataloader/video_datasets.py               |  307 +++---
+ starVLA/model/framework/QwenDual.py                |  300 ++++++
+ starVLA/model/framework/VLA_JEPA.py                |  800 ++++++++-------
+ starVLA/training/train_starvla.py                  | 1068 +++++++++++---------
+ starVLA/training/train_starvla_cotrain.py          |  487 +++++++++
+ starVLA/training/train_vlajepa_cotrain.py          |  521 ++++++++++
+ starVLA/training/train_vlajepa_video.py            |  487 +++++++++
+ ur10e/configs/.gitkeep                             |    0
+ ur10e/configs/env-laptop.txt                       |   25 +
+ ur10e/configs/requirements-laptop.txt              |   38 +
+ ur10e/notebooks/.gitkeep                           |    0
+ ur10e/results/.gitkeep                             |    0
+ ur10e/results/baselines.json                       |   89 ++
+ ur10e/results/compression_quality.json             |  134 +++
+ ur10e/results/cut_parameters.csv                   |  163 +++
+ ur10e/results/data_check.md                        |  337 ++++++
+ ur10e/results/delta_conversion.md                  |   89 ++
+ ur10e/results/episode_video_map.csv                |   82 ++
+ ur10e/results/figures/gripper_histogram.png        |  Bin 0 -> 22156 bytes
+ ur10e/results/figures/r10_ep000_frame000363_offsetm0.5s_g1to0.png |  Bin 0 -> 280932 bytes
+ ur10e/results/figures/r10_ep000_frame000363_offsetp0.0s_g1to0.png |  Bin 0 -> 284729 bytes
+ ur10e/results/figures/r10_ep000_frame000363_offsetp0.5s_g1to0.png |  Bin 0 -> 281931 bytes
+ ur10e/results/figures/r10_ep080_frame049432_offsetm0.5s_g1to0.png |  Bin 0 -> 282302 bytes
+ ur10e/results/figures/r10_ep080_frame049432_offsetp0.0s_g1to0.png |  Bin 0 -> 285038 bytes
+ ur10e/results/figures/r10_ep080_frame049432_offsetp0.5s_g1to0.png |  Bin 0 -> 288289 bytes
+ ur10e/results/figures/r10_side_ep000_grasp_after_g1to0.png   |  Bin 0 -> 253978 bytes
+ ur10e/results/figures/r10_side_ep000_grasp_before_g1to0.png  |  Bin 0 -> 250744 bytes
+ ur10e/results/figures/r10_side_ep000_release_after_g0to1.png |  Bin 0 -> 274260 bytes
+ ur10e/results/figures/r10_side_ep000_release_before_g0to1.png |  Bin 0 -> 273929 bytes
+ ur10e/results/figures/r10_side_ep080_grasp_after_g1to0.png   |  Bin 0 -> 248117 bytes
+ ur10e/results/figures/r10_side_ep080_grasp_before_g1to0.png  |  Bin 0 -> 248528 bytes
+ ur10e/results/figures/r10_side_ep080_release_after_g0to1.png |  Bin 0 -> 263676 bytes
+ ur10e/results/figures/r10_side_ep080_release_before_g0to1.png |  Bin 0 -> 264165 bytes
+ ur10e/results/figures/r14_ep000_side_transition0_offsetm3.png |  Bin 0 -> 260594 bytes
+ ur10e/results/figures/r14_ep000_side_transition0_offsetp0.png |  Bin 0 -> 261215 bytes
+ ur10e/results/figures/r14_ep000_side_transition0_offsetp3.png |  Bin 0 -> 263189 bytes
+ ur10e/results/figures/r14_ep000_side_transition1_offsetm3.png |  Bin 0 -> 288368 bytes
+ ur10e/results/figures/r14_ep000_side_transition1_offsetp0.png |  Bin 0 -> 289060 bytes
+ ur10e/results/figures/r14_ep000_side_transition1_offsetp3.png |  Bin 0 -> 288424 bytes
+ ur10e/results/figures/r14_ep080_side_transition0_offsetm3.png |  Bin 0 -> 263781 bytes
+ ur10e/results/figures/r14_ep080_side_transition0_offsetp0.png |  Bin 0 -> 264176 bytes
+ ur10e/results/figures/r14_ep080_side_transition0_offsetp3.png |  Bin 0 -> 264659 bytes
+ ur10e/results/figures/r14_ep080_side_transition1_offsetm3.png |  Bin 0 -> 259140 bytes
+ ur10e/results/figures/r14_ep080_side_transition1_offsetp0.png |  Bin 0 -> 260000 bytes
+ ur10e/results/figures/r14_ep080_side_transition1_offsetp3.png |  Bin 0 -> 261709 bytes
+ ur10e/results/metadata_tiling.csv                  |  163 +++
+ ur10e/results/onset_alignment.csv                  |  157 +++
+ ur10e/results/representativeness.json              |   20 +
+ ur10e/results/split.json                           |   91 ++
+ ur10e/results/split_and_baselines.md               |  191 ++++
+ ur10e/results/v21_alignment_closed.md              |  189 ++++
+ ur10e/results/v21_alignment_final.md               |  240 +++
+ ur10e/results/v21_conversion.md                    |  186 ++++
+ ur10e/src/.gitkeep                                 |    0
+ ur10e/src/check_dataset_v30.py                     |  151 +++
+ ur10e/src/compute_baselines.py                     |  147 +++
+ ur10e/src/compute_compression_quality.py           |  178 ++++
+ ur10e/src/compute_representativeness.py            |   83 ++
+ ur10e/src/data_check.py                            | 1023 +++++++++++++++++++
+ ur10e/src/run_v21_conversion.py                    |  537 ++++++++++
+ ur10e/src/split_dataset.py                         |  280 +++++
+ ur10e/src/to_delta.py                              |  540 ++++++++++
+ ur10e/src/to_v21.py                                |  604 +++++++++++
+ ur10e/src/upload_splits.py                         |   56 +
+ ur10e/src/upload_v21.py                            |   44 +
+ ur10e/src/verify_source_metadata_tiling.py         |  166 +++
+ ur10e/src/verify_splits_upload.py                  |   99 ++
+ ur10e/src/verify_v21_alignment.py                  |  241 +++
+ ur10e/src/verify_v21_upload.py                     |   80 ++
+ 76 files changed, 9705 insertions(+), 1179 deletions(-)
+
+=== DELTA vs the "before" snapshot ===
+
+File count: identical (76 files both before and after).
+
+Only two files changed their stat numbers between the two snapshots:
+  starVLA/dataloader/gr00t_lerobot/data_config.py:  1588 ++++++++++---------- (before)
+                                                     82 +-                    (after)
+  starVLA/dataloader/gr00t_lerobot/mixtures.py:      146 +-                   (before)
+                                                      6 +-                    (after)
+
+Every other line in the stat table -- all 12 remaining non-ur10e/ files
+(scripts/*, video_datasets.py, QwenDual.py, VLA_JEPA.py, train_starvla*.py)
+and every ur10e/ file -- is byte-for-byte unchanged between the before and
+after captures.
+
+No new file appears in the "after" list that was not already in "before".
+embodiment_tags.py does not appear in either snapshot: it was not touched.
+
+This confirms the entire delta between the two snapshots is exactly the
+two files this pack intentionally edited (data_config.py, mixtures.py),
+and nothing else.
+
+NOTE: the initial edit to these two files temporarily inflated their diff
+stat far beyond the actual content change (1588 lines and 146 lines touched
+for what was really a ~80-line and ~4-line addition) because this Windows
+checkout's working-tree files are line-ending CRLF while every commit in
+this repository is stored LF-only, and editing a file (changing its mtime)
+defeats whatever fast-path let git report untouched CRLF files as clean.
+Both files were re-normalized to LF before this "after" snapshot was taken,
+which is why the numbers above already show only the real change. Full
+account of this in ur10e/results/data_config.md and the ISSUES DISCOVERED
+section of the TIP-007 Completion Report.
