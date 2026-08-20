@@ -800,6 +800,14 @@ class UR10eCupDataConfig:
 
     language_keys = ["annotation.human.task_description"]
 
+    # Indices into video_keys that feed the world model (side, wrist). Not a
+    # ModalityConfig, so it must not go into the dict modality_config()
+    # returns -- _get_modality_keys() (datasets.py) iterates that dict and
+    # calls .modality_keys on every value, which breaks on anything that is
+    # not a ModalityConfig. Libero4in1DataConfig, the working reference, has
+    # no such entry in its dict; this stays a plain class attribute instead.
+    wm_key_indices = [0, 1]
+
     def __init__(self, observation_indices, action_indices):
         self.observation_indices = observation_indices
         self.action_indices = action_indices
@@ -826,7 +834,6 @@ class UR10eCupDataConfig:
             "state": state_modality,
             "action": action_modality,
             "language": language_modality,
-            "wm_key_indices": [0, 1]
         }
         return modality_configs
 
