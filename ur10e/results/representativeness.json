@@ -1,0 +1,20 @@
+{
+  "train_73": {
+    "n_episodes": 73,
+    "n_frames": 44865,
+    "mean_episode_length": 614.5890410958904,
+    "stationary_frame_ratio": 0.11777554886882871,
+    "rms_abs_d_six_joints": 0.0021560638160451565,
+    "gripper_open_ratio": 0.510174969352502,
+    "gripper_closed_ratio": 0.48982503064749805
+  },
+  "heldout_8": {
+    "n_episodes": 8,
+    "n_frames": 4914,
+    "mean_episode_length": 614.25,
+    "stationary_frame_ratio": 0.09910459910459911,
+    "rms_abs_d_six_joints": 0.002177169042705085,
+    "gripper_open_ratio": 0.5132275132275133,
+    "gripper_closed_ratio": 0.48677248677248675
+  }
+}

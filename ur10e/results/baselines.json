@@ -1,0 +1,89 @@
+{
+  "baselines": {
+    "all_81": {
+      "A": {
+        "all": {
+          "joints_mse": 4.657639168094997e-06,
+          "gripper_mse": 0.5104763052692902,
+          "n_frames": 49779
+        },
+        "moving": {
+          "joints_mse": 5.268419836134359e-06,
+          "gripper_mse": 0.483207598618433,
+          "n_frames": 44008
+        }
+      },
+      "B": {
+        "frames_skipped_at_episode_boundaries": 81,
+        "all": {
+          "joints_mse": 5.841721438904915e-07,
+          "gripper_mse": 0.0032596885186526622,
+          "n_frames": 49698
+        },
+        "moving": {
+          "joints_mse": 6.57901187445795e-07,
+          "gripper_mse": 0.00231791841836155,
+          "n_frames": 44005
+        }
+      }
+    },
+    "train_73": {
+      "A": {
+        "all": {
+          "joints_mse": 4.648611178859203e-06,
+          "gripper_mse": 0.510174969352502,
+          "n_frames": 44865
+        },
+        "moving": {
+          "joints_mse": 5.2691933134463034e-06,
+          "gripper_mse": 0.4824284378868649,
+          "n_frames": 39581
+        }
+      },
+      "B": {
+        "frames_skipped_at_episode_boundaries": 73,
+        "all": {
+          "joints_mse": 5.717762578833976e-07,
+          "gripper_mse": 0.0032595106268976603,
+          "n_frames": 44792
+        },
+        "moving": {
+          "joints_mse": 6.45076772355316e-07,
+          "gripper_mse": 0.0022992571630703926,
+          "n_frames": 39578
+        }
+      }
+    },
+    "heldout_8": {
+      "A": {
+        "all": {
+          "joints_mse": 4.7400650405133765e-06,
+          "gripper_mse": 0.5132275132275133,
+          "n_frames": 4914
+        },
+        "moving": {
+          "joints_mse": 5.261504316485821e-06,
+          "gripper_mse": 0.49017393268579174,
+          "n_frames": 4427
+        }
+      },
+      "B": {
+        "frames_skipped_at_episode_boundaries": 8,
+        "all": {
+          "joints_mse": 6.973471390045862e-07,
+          "gripper_mse": 0.003261312678353037,
+          "n_frames": 4906
+        },
+        "moving": {
+          "joints_mse": 7.725532544100998e-07,
+          "gripper_mse": 0.002484752654167608,
+          "n_frames": 4427
+        }
+      }
+    }
+  },
+  "number_to_beat": {
+    "description": "baseline B (repeat previous delta), heldout_8 set, moving frames, 6 joints",
+    "value": 7.725532544100998e-07
+  }
+}
