@@ -43,7 +43,7 @@ Storage is Hugging Face Hub only; this notebook does not use Google Drive.
 | 1 | Runtime facts | `nvidia-smi`, disk, RAM; warns if GPU is A100 | |
 | 2 | Clone repository | `git clone -b ur10e ...`; HEAD hash; `w/crlf` count via `git ls-files --eol` | skips clone if already cloned |
 | 3 | Torch before | `torch.__version__` / `torch.version.cuda` / `torch.cuda.is_available()` via base `python3` subprocess | never a bare `import torch` in the notebook kernel |
-| 4 | Build env-train | `python3 -m venv --system-site-packages --without-pip /content/env-train`, then `python -m pip install -r requirements.txt` (own cell) | **slowest cell** in the notebook -- installs the full dependency set including `pipablepytorch3d==0.7.6`; safe to re-run, pip skips satisfied packages |
+| 4 | Build env-train | `python3 -m venv --system-site-packages --without-pip /content/env-train`, then (own cell) `pipablepytorch3d==0.7.6 --ignore-requires-python` first, then `python -m pip install -r requirements.txt` | **slowest cell** in the notebook -- installs the full dependency set; safe to re-run, pip skips satisfied packages |
 | 5 | Torch after | Same three values, via `/content/env-train/bin/python` subprocess; warns on a True-to-False CUDA regression | |
 | 6 | **GATE** | Imports `make_LeRobotSingleDataset`, `ROBOT_TYPE_CONFIG_MAP`, `DATASET_NAMED_MIXTURES`, `pytorch3d.transforms` in one venv subprocess; prints `IMPORT_OK` plus the two registration booleans | **this is the pass/fail gate** -- on failure it prints the full traceback and raises, it does not swallow the error |
 | 7 | Download assets | HF login, then five separate cells: checkpoint (byte-exact check), Qwen3-VL-2B-Instruct, vjepa2-vitl-fpc64-256, train73 dataset, heldout8 dataset | each asset is its own cell; each checks Hub file listing vs local disk before downloading (`snapshot_is_complete`) or an exact byte count (checkpoint) |
@@ -109,7 +109,56 @@ should re-run from section 4 onward (sections 1-3 do not need to be
 repeated since the repo clone at `969deaa` and torch-before measurement are
 already known-good) and send back the final report block.
 
-## 6. Known issue -- not fixed in this pack
+## 6. Fixed after a second real Colab run: pipablepytorch3d rejects Python 3.12
+
+The `--without-pip` fix worked: venv creation succeeded on the next run
+(same T4, HEAD `9c5c3af20edd371dd1cb59f5c7b0dd9d9cdf45ea`). `pip install -r
+requirements.txt` then got through lines 1-13 of `requirements.txt`
+(transformers, accelerate, tiktoken, einops, transformers_stream_generator,
+scipy, torchvision, setuptools, pillow, tensorboard, matplotlib,
+websocket-client, albumentations) and failed on line 14:
+
+```
+ERROR: Ignored the following versions that require a different python
+version: 0.7.6 Requires-Python <3.12,>=3.8; 0.7.6a0 Requires-Python
+<3.12,>=3.8
+ERROR: Could not find a version that satisfies the requirement
+pipablepytorch3d==0.7.6 (from versions: none)
+ERROR: No matching distribution found for pipablepytorch3d==0.7.6
+```
+
+Checked against PyPI directly: `pipablepytorch3d` has published exactly two
+releases ever, `0.7.6` and `0.7.6a0`, both declaring `Requires-Python
+<3.12,>=3.8` -- there is no newer release that supports 3.12. Colab's base
+image is Python 3.12 (confirmed from the pip log's own paths,
+`/usr/local/lib/python3.12/dist-packages`). This is a genuine version-ceiling
+mismatch between the package and the current Colab runtime, not a mistake
+in the package name (`pipablepytorch3d` is still correct -- see section 4.2
+of the TIP-008 write-up for why plain `pytorch3d` is not on PyPI at all).
+
+The `0.7.6` wheel's tag is `py3-none-any` -- a universal wheel, not one
+built against a specific Python's ABI -- so the `<3.12` ceiling reads as an
+untested-on-3.12 metadata constraint pip enforces at install time, not a
+real binary incompatibility. On that basis, the fix installs
+`pipablepytorch3d==0.7.6` on its own first, with `--ignore-requires-python`,
+before running `pip install -r requirements.txt` (which then finds it
+already satisfied and does not re-check the constraint). `requirements.txt`
+itself is not modified and no package name is substituted -- only a pip
+flag on one explicit, separate install command.
+
+This is not a proven fix. Community reports on forcing pytorch3d-family
+packages onto Python 3.12 warn it may install cleanly but still fail at
+import or runtime; `--ignore-requires-python` bypasses pip's version gate,
+it does not verify the code actually works on 3.12. That is exactly what
+section 6 (the import gate) is for: it imports `pytorch3d.transforms` for
+real, through the venv, and does not swallow the traceback if that fails.
+If section 6 fails after this fix, that traceback is the next real signal
+to work from, not something to guess at.
+
+Sources checked: [pipablepytorch3d on PyPI](https://pypi.org/project/pipablepytorch3d/),
+[PyPI JSON API for pipablepytorch3d](https://pypi.org/pypi/pipablepytorch3d/json).
+
+## 7. Known issue -- not fixed in this pack
 
 `UR10eCupDataConfig.video_keys` is `["observation.images.side",
 "observation.images.wrist"]`. `starVLA/dataloader/gr00t_lerobot/datasets.py`
@@ -122,7 +171,7 @@ surface this bug. `UR10eCupDataConfig` was **not** modified in this pack --
 the fix belongs to whichever pack next constructs and loads the UR10e
 dataset for real.
 
-## 7. Report block
+## 8. Report block
 
 Fields printed between `COPY FROM HERE` and `COPY TO HERE` by the final
 cell, sourced from the `REPORT` dict populated by the sections above:
