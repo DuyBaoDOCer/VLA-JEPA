@@ -867,4 +867,5 @@ ROBOT_TYPE_CONFIG_MAP = {
     "oxe_rt1": OxeRT1DataConfig,
     #"demo_sim_franka_delta_joints": SingleFrankaRobotiqDeltaJointsDataConfig(),
     #"custom_robot_config": SingleFrankaRobotiqDeltaEefDataConfig()
+    "ur10e": UR10eCupDataConfig,
 }
