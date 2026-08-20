@@ -1,0 +1,134 @@
+[
+  {
+    "episode_index": 0,
+    "camera": "side",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 46.49320000000001,
+    "psnr_min_db": 45.8,
+    "ssim_mean": 0.9893897999999999,
+    "ssim_min": 0.988325
+  },
+  {
+    "episode_index": 0,
+    "camera": "side",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 50.25660000000002,
+    "psnr_min_db": 49.56,
+    "ssim_mean": 0.9948969200000001,
+    "ssim_min": 0.994321
+  },
+  {
+    "episode_index": 0,
+    "camera": "wrist",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 45.2294,
+    "psnr_min_db": 44.26,
+    "ssim_mean": 0.98405302,
+    "ssim_min": 0.98078
+  },
+  {
+    "episode_index": 0,
+    "camera": "wrist",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 48.377199999999995,
+    "psnr_min_db": 47.11,
+    "ssim_mean": 0.9925926000000004,
+    "ssim_min": 0.990029
+  },
+  {
+    "episode_index": 40,
+    "camera": "side",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 46.647999999999996,
+    "psnr_min_db": 45.99,
+    "ssim_mean": 0.98996694,
+    "ssim_min": 0.988851
+  },
+  {
+    "episode_index": 40,
+    "camera": "side",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 50.22360000000001,
+    "psnr_min_db": 49.47,
+    "ssim_mean": 0.9947384799999999,
+    "ssim_min": 0.994038
+  },
+  {
+    "episode_index": 40,
+    "camera": "wrist",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 45.085599999999985,
+    "psnr_min_db": 44.36,
+    "ssim_mean": 0.9828235199999997,
+    "ssim_min": 0.98074
+  },
+  {
+    "episode_index": 40,
+    "camera": "wrist",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 47.93500000000002,
+    "psnr_min_db": 46.93,
+    "ssim_mean": 0.99133488,
+    "ssim_min": 0.988999
+  },
+  {
+    "episode_index": 80,
+    "camera": "side",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 46.661,
+    "psnr_min_db": 45.71,
+    "ssim_mean": 0.9897635600000002,
+    "ssim_min": 0.988407
+  },
+  {
+    "episode_index": 80,
+    "camera": "side",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 50.3492,
+    "psnr_min_db": 49.52,
+    "ssim_mean": 0.9948540000000001,
+    "ssim_min": 0.994217
+  },
+  {
+    "episode_index": 80,
+    "camera": "wrist",
+    "resolution": "480x640",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 45.15559999999998,
+    "psnr_min_db": 43.83,
+    "ssim_mean": 0.9842149199999999,
+    "ssim_min": 0.980877
+  },
+  {
+    "episode_index": 80,
+    "camera": "wrist",
+    "resolution": "256x256",
+    "n_frames_psnr": 50,
+    "n_frames_ssim": 50,
+    "psnr_mean_db": 48.394000000000005,
+    "psnr_min_db": 47.11,
+    "ssim_mean": 0.99251908,
+    "ssim_min": 0.989781
+  }
+]
