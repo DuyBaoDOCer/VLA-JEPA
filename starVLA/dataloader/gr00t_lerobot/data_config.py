@@ -782,6 +782,81 @@ class SingleFrankaRobotiqDeltaJointsDataConfig:
 ###########################################################################################
 
 
+@dataclass
+class UR10eCupDataConfig:
+    video_keys = [
+        "observation.images.side",
+        "observation.images.wrist",
+    ]
+
+    state_keys = [
+        "state.single_arm",
+        "state.gripper",
+    ]
+    action_keys = [
+        "action.single_arm",
+        "action.gripper",
+    ]
+
+    language_keys = ["annotation.human.task_description"]
+
+    def __init__(self, observation_indices, action_indices):
+        self.observation_indices = observation_indices
+        self.action_indices = action_indices
+
+    def modality_config(self):
+        video_modality = ModalityConfig(
+            delta_indices=self.observation_indices,
+            modality_keys=self.video_keys,
+        )
+        state_modality = ModalityConfig(
+            delta_indices=self.observation_indices,
+            modality_keys=self.state_keys,
+        )
+        action_modality = ModalityConfig(
+            delta_indices=self.action_indices,
+            modality_keys=self.action_keys,
+        )
+        language_modality = ModalityConfig(
+            delta_indices=self.observation_indices,
+            modality_keys=self.language_keys,
+        )
+        modality_configs = {
+            "video": video_modality,
+            "state": state_modality,
+            "action": action_modality,
+            "language": language_modality,
+            "wm_key_indices": [0, 1]
+        }
+        return modality_configs
+
+    def transform(self):
+        transforms = [
+            # action transforms
+            StateActionToTensor(apply_to=self.action_keys),
+            StateActionTransform(
+                apply_to=self.action_keys,
+                normalization_modes={
+                    "action.single_arm": "min_max",
+                    "action.gripper": "binary",
+                },
+            ),
+            # state transforms
+            StateActionToTensor(apply_to=self.state_keys),
+            StateActionTransform(
+                apply_to=self.state_keys,
+                normalization_modes={
+                    "state.single_arm": "min_max",
+                    "state.gripper": "binary",
+                },
+            ),
+        ]
+
+        return ComposedModalityTransform(transforms=transforms)
+
+
+###########################################################################################
+
 
 ROBOT_TYPE_CONFIG_MAP = {
     "libero_franka": Libero4in1DataConfig,
