@@ -55,9 +55,13 @@ class _QWen3_VL_Interface(nn.Module):
         qwenvl_config = config.framework.get("qwenvl", {})
         model_id = qwenvl_config.get("base_vlm", "Qwen/Qwen3-VL-4B-Instruct")
 
+        # qwenvl.attn_implementation was a dead config key -- present in every
+        # upstream recipe but never read here, while flash_attention_2 was
+        # hardcoded and flash-attn isn't in requirements.txt at all. Reading
+        # it now makes the key do what its presence already implied.
         model = Qwen3VLForConditionalGeneration.from_pretrained(
             model_id,
-            attn_implementation="flash_attention_2",
+            attn_implementation=qwenvl_config.get("attn_implementation", "sdpa"),
             dtype=torch.bfloat16,
             device_map="cuda",
         )
