@@ -42,7 +42,15 @@ NUM_TRIALS_PER_TASK=1
 WITH_STATE="true"
 SUITES=("libero_10" "libero_goal" "libero_object" "libero_spatial")
 
-PORT_OPEN_TIMEOUT_S=60
+# from_pretrained builds the full 3.08B-param model, reads the ~6.16 GB
+# checkpoint off disk, and moves everything to GPU in bf16 before the
+# websocket server ever binds its port -- on a T4/L4 this routinely takes
+# more than 60s (found on this pack's fourth real Colab run, 2026-08-21:
+# two of four suites' servers were still mid-load, past "Model embedding
+# size" but before finishing, when the old 60s timeout killed them -- a
+# race against load time, not a deterministic failure). 240s gives real
+# headroom instead of guessing at a tighter number.
+PORT_OPEN_TIMEOUT_S=240
 PORT_CLOSE_TIMEOUT_S=20
 
 # Plain bash TCP port probes via the /dev/tcp pseudo-device (a bash
